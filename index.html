@@ -17,14 +17,17 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #fb923c 0%, #ef4444 50%, #ec4899 100%);
+            background: #1d1d1d;
             min-height: 100vh;
         }
         
         .container {
-            max-width: 28rem;
+            max-width: 700px;
             margin: 0 auto;
             padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .card {
@@ -34,10 +37,13 @@
             border-radius: 0.75rem;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
+            width: 100%;
+            max-width: 650px;
         }
         
         .btn {
             width: 100%;
+            max-width: 600px;
             padding: 1rem;
             border: none;
             border-radius: 0.75rem;
@@ -327,8 +333,24 @@
                 return (
                     <div className="container" style={{ minHeight: '100vh', paddingTop: '2rem' }}>
                         <div className="text-center mb-8">
-                            <h1 className="text-4xl font-bold text-white mb-4">What's for Dinner?</h1>
-                            <p className="text-white opacity-90">Let us decide for you!</p>
+                            {/* Logo Image - Replace 'your-logo.png' with your actual image file */}
+                            <img 
+                                src="your-logo.png" 
+                                alt="What's for Dinner? Logo" 
+                                className="logo-image mb-4"
+                                style={{ 
+                                    maxWidth: '500px', 
+                                    height: 'auto',
+                                    display: 'block',
+                                    margin: '0 auto'
+                                }}
+                                onError={(e) => {
+                                    // Fallback to text if image fails to load
+                                    e.target.style.display = 'none';
+                                    e.target.nextSibling.style.display = 'block';
+                                }}
+                            />
+                            <h1 className="text-4xl font-bold text-white mb-4" style={{ display: 'none' }}>What's for Dinner?</h1>
                         </div>
 
                         <div className="space-y-6">
@@ -359,8 +381,8 @@
 
                         <button
                             onClick={() => setCurrentView('manage')}
-                            className="btn mt-8"
-                            style={{ background: 'rgba(255, 255, 255, 0.1)' }}
+                            className="back-btn mt-8"
+                            style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '1rem', padding: '0.5rem 0' }}
                         >
                             <div className="flex items-center justify-center space-x-2">
                                 <IconComponent name="Settings" size={20} />
@@ -389,7 +411,11 @@
                             </h2>
                         </div>
 
-                        <div className="card text-center mb-6">
+                        <div className="card text-center mb-6" style={{ 
+                            background: 'linear-gradient(135deg, #f0854a 0%, #57e6bf 100%)',
+                            backdropFilter: 'blur(10px)',
+                            border: '1px solid rgba(255, 255, 255, 0.3)'
+                        }}>
                             {currentSuggestion ? (
                                 <div>
                                     <h3 className="text-3xl font-bold text-white mb-2">{currentSuggestion.name}</h3>
@@ -418,10 +444,10 @@
                             <div className="space-y-4">
                                 <button
                                     onClick={() => getRandomSuggestion(suggestionType)}
-                                    className="btn"
-                                    style={{ padding: '1.5rem' }}
+                                    className="back-btn"
+                                    style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '1.25rem', padding: '0.5rem 0', fontWeight: '600' }}
                                 >
-                                    <span className="text-xl font-semibold">Another One</span>
+                                    <span>Another One</span>
                                 </button>
                             </div>
                         )}
@@ -433,19 +459,18 @@
             if (currentView === 'manage') {
                 return (
                     <div className="container" style={{ minHeight: '100vh', paddingTop: '2rem' }}>
-                        <div className="flex items-center justify-between mb-6">
-                            <button
-                                onClick={() => {
-                                    resetForms();
-                                    setCurrentView('main');
-                                }}
-                                className="back-btn"
-                            >
-                                <IconComponent name="ArrowLeft" size={20} />
-                                <span>Back to Menu</span>
-                            </button>
-                            <h2 className="text-2xl font-bold text-white">Manage Lists</h2>
-                        </div>
+                        <button
+                            onClick={() => {
+                                resetForms();
+                                setCurrentView('main');
+                            }}
+                            className="back-btn mb-6"
+                        >
+                            <IconComponent name="ArrowLeft" size={20} />
+                            <span>Back to Menu</span>
+                        </button>
+                        
+                        <h2 className="text-2xl font-bold text-white mb-6 text-center">Manage Lists</h2>
 
                         {/* Add/Edit Form */}
                         {(showAddForm || editingItem) && (
@@ -501,8 +526,9 @@
                                         setAddFormType('home');
                                     }}
                                     className="icon-btn"
+                                    style={{ fontSize: '1.5rem', fontWeight: 'bold', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                 >
-                                    <IconComponent name="Plus" size={20} />
+                                    +
                                 </button>
                             </div>
                             <div className="max-h-40 overflow-y-auto">
@@ -549,8 +575,9 @@
                                         setAddFormType('restaurant');
                                     }}
                                     className="icon-btn"
+                                    style={{ fontSize: '1.5rem', fontWeight: 'bold', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                 >
-                                    <IconComponent name="Plus" size={20} />
+                                    +
                                 </button>
                             </div>
                             <div className="max-h-40 overflow-y-auto">
@@ -596,4 +623,4 @@
         root.render(<DinnerDecisionApp />);
     </script>
 </body>
-</html>
+</html> 
