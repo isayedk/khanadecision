@@ -1,12 +1,39 @@
 {
   "homeItems": [
-    { "id": 1, "name": "Chicken Karahi", "cuisine": "Pakistani" },
-    { "id": 2, "name": "Chicken Biryani", "cuisine": "Pakistani" },
-    { "id": 3, "name": "Tiramisu", "cuisine": "Italian" }
+    { "id": 1, "name": "Chicken Karahi" },
+    { "id": 2, "name": "Beef/Mutton Biryani" },
+    { "id": 3, "name": "Hainanese Chicken" },
+    { "id": 4, "name": "Dumplings" },
+    { "id": 5, "name": "Nasi Paprik" },
+    { "id": 6, "name": "Dum Biryani" },
+    { "id": 7, "name": "Chicken Qorma" },
+    { "id": 8, "name": "Joojeh Kebab" },
+    { "id": 9, "name": "Beef Tikka Boti" },
+    { "id": 10, "name": "Chicken Tuscon Pasta" },
+    { "id": 11, "name": "Shia Qeema" },
+    { "id": 12, "name": "Pad Kra Pao" },
+    { "id": 13, "name": "Chicken Shawarma" },
+    { "id": 14, "name": "Teriyaki Chicken" },
+    { "id": 15, "name": "Hari Kebab" },
+    { "id": 16, "name": "Dynamite Shrimp" },
+    { "id": 17, "name": "Halal Guys" },
+    { "id": 18, "name": "Snash Burgers" },
+    { "id": 19, "name": "Aloo Gosht" },
+    { "id": 20, "name": "Beef Pulao" },
+    { "id": 21, "name": "Tehari (PK)" },
+    { "id": 22, "name": "Tehari (BD)" },
+    { "id": 23, "name": "Aloo Katlay" },
+    { "id": 24, "name": "Fettucine Alfredo" },
+    { "id": 25, "name": "Creamy Pasta" },
+    { "id": 26, "name": "Chicken Tenders" },
+    { "id": 27, "name": "Hot dogs" },
+    { "id": 28, "name": "Fried Rice and Chicken" },
+    { "id": 28, "name": "Chicken Chowmein" },
+    { "id": 28, "name": "Sichuan Chicken Fat Noodles" },
   ],
   "restaurantItems": [
-    { "id": 1, "name": "Pars", "cuisine": "Persian" },
-    { "id": 2, "name": "Jollibee", "cuisine": "Filipino" },
-    { "id": 3, "name": "Shehr e Karachi", "cuisine": "Pakistani" }
+    { "id": 1, "name": "Pars" },
+    { "id": 2, "name": "Jollibee" },
+    { "id": 3, "name": "Shehr e Karachi" }
   ]
 }
