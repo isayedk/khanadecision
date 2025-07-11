@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What's for Dinner?</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #fb923c 0%, #ef4444 50%, #ec4899 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 28rem;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.9);
+            color: #ef4444;
+        }
+        
+        .btn-primary:hover {
+            background: white;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-8 { margin-top: 2rem; }
+        .space-y-4 > * + * { margin-top: 1rem; }
+        .space-y-6 > * + * { margin-top: 1.5rem; }
+        
+        .flex {
+            display: flex;
+        }
+        
+        .items-center {
+            align-items: center;
+        }
+        
+        .justify-center {
+            justify-content: center;
+        }
+        
+        .justify-between {
+            justify-content: space-between;
+        }
+        
+        .space-x-2 > * + * { margin-left: 0.5rem; }
+        .space-x-3 > * + * { margin-left: 0.75rem; }
+        
+        .text-white { color: white; }
+        .text-2xl { font-size: 1.5rem; }
+        .text-3xl { font-size: 1.875rem; }
+        .text-4xl { font-size: 2.25rem; }
+        .text-xl { font-size: 1.25rem; }
+        .text-lg { font-size: 1.125rem; }
+        .text-sm { font-size: 0.875rem; }
+        
+        .font-bold { font-weight: 700; }
+        .font-semibold { font-weight: 600; }
+        .font-medium { font-weight: 500; }
+        
+        .input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .input:focus {
+            outline: none;
+            ring: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .overflow-y-auto {
+            overflow-y: auto;
+        }
+        
+        .max-h-40 {
+            max-height: 10rem;
+        }
+        
+        .item-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .icon-btn {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.5rem 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            opacity: 0.8;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .opacity-70 {
+            opacity: 0.7;
+        }
+        
+        .opacity-80 {
+            opacity: 0.8;
+        }
+        
+        .opacity-90 {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        
+        // Icon components
+        const IconComponent = ({ name, size = 24, color = "currentColor" }) => {
+            const [icon, setIcon] = useState(null);
+            
+            useEffect(() => {
+                if (window.lucide && window.lucide[name]) {
+                    const iconElement = window.lucide[name];
+                    setIcon(iconElement);
+                }
+            }, [name]);
+            
+            if (!icon) return null;
+            
+            return React.createElement(icon, { size, color });
+        };
+        
+        const DinnerDecisionApp = () => {
+            const [homeItems, setHomeItems] = useState([]);
+            const [restaurantItems, setRestaurantItems] = useState([]);
+            const [currentView, setCurrentView] = useState('main');
+            const [currentSuggestion, setCurrentSuggestion] = useState(null);
+            const [suggestionType, setSuggestionType] = useState(null);
+            const [showAddForm, setShowAddForm] = useState(false);
+            const [addFormType, setAddFormType] = useState('');
+            const [editingItem, setEditingItem] = useState(null);
+            const [formData, setFormData] = useState({ name: '', cuisine: '' });
+
+            // Load data from localStorage on component mount
+            useEffect(() => {
+                const savedHomeItems = localStorage.getItem('dinnerApp_homeItems');
+                const savedRestaurantItems = localStorage.getItem('dinnerApp_restaurantItems');
+                
+                if (savedHomeItems) {
+                    setHomeItems(JSON.parse(savedHomeItems));
+                }
+                if (savedRestaurantItems) {
+                    setRestaurantItems(JSON.parse(savedRestaurantItems));
+                }
+            }, []);
+
+            // Save data to localStorage whenever items change
+            useEffect(() => {
+                localStorage.setItem('dinnerApp_homeItems', JSON.stringify(homeItems));
+            }, [homeItems]);
+
+            useEffect(() => {
+                localStorage.setItem('dinnerApp_restaurantItems', JSON.stringify(restaurantItems));
+            }, [restaurantItems]);
+
+            const getRandomSuggestion = (type) => {
+                const items = type === 'home' ? homeItems : restaurantItems;
+                if (items.length === 0) {
+                    setCurrentSuggestion(null);
+                    setSuggestionType(type);
+                    setCurrentView('suggestion');
+                    return;
+                }
+                
+                const randomIndex = Math.floor(Math.random() * items.length);
+                setCurrentSuggestion(items[randomIndex]);
+                setSuggestionType(type);
+                setCurrentView('suggestion');
+            };
+
+            const handleAddItem = () => {
+                if (!formData.name.trim()) return;
+                
+                const newItem = {
+                    id: Date.now(),
+                    name: formData.name.trim(),
+                    cuisine: formData.cuisine.trim()
+                };
+
+                if (addFormType === 'home') {
+                    setHomeItems([...homeItems, newItem]);
+                } else {
+                    setRestaurantItems([...restaurantItems, newItem]);
+                }
+
+                setFormData({ name: '', cuisine: '' });
+                setShowAddForm(false);
+                setAddFormType('');
+            };
+
+            const handleEditItem = () => {
+                if (!formData.name.trim()) return;
+                
+                const updatedItem = {
+                    ...editingItem,
+                    name: formData.name.trim(),
+                    cuisine: formData.cuisine.trim()
+                };
+
+                if (editingItem.type === 'home') {
+                    setHomeItems(homeItems.map(item => 
+                        item.id === editingItem.id ? updatedItem : item
+                    ));
+                } else {
+                    setRestaurantItems(restaurantItems.map(item => 
+                        item.id === editingItem.id ? updatedItem : item
+                    ));
+                }
+
+                setEditingItem(null);
+                setFormData({ name: '', cuisine: '' });
+            };
+
+            const handleDeleteItem = (id, type) => {
+                if (type === 'home') {
+                    setHomeItems(homeItems.filter(item => item.id !== id));
+                } else {
+                    setRestaurantItems(restaurantItems.filter(item => item.id !== id));
+                }
+            };
+
+            const startEdit = (item, type) => {
+                setEditingItem({ ...item, type });
+                setFormData({ name: item.name, cuisine: item.cuisine || '' });
+            };
+
+            const resetForms = () => {
+                setShowAddForm(false);
+                setAddFormType('');
+                setEditingItem(null);
+                setFormData({ name: '', cuisine: '' });
+            };
+
+            // Main Menu View
+            if (currentView === 'main') {
+                return (
+                    <div className="container" style={{ minHeight: '100vh', paddingTop: '2rem' }}>
+                        <div className="text-center mb-8">
+                            <h1 className="text-4xl font-bold text-white mb-4">What's for Dinner?</h1>
+                            <p className="text-white opacity-90">Let us decide for you!</p>
+                        </div>
+
+                        <div className="space-y-6">
+                            <button
+                                onClick={() => getRandomSuggestion('home')}
+                                className="btn"
+                                style={{ padding: '2rem 1.5rem' }}
+                            >
+                                <div className="flex items-center justify-center space-x-3">
+                                    <IconComponent name="Home" size={32} />
+                                    <span className="text-2xl font-semibold">Eating at Home</span>
+                                </div>
+                                <p className="opacity-80 mt-2">{homeItems.length} meals available</p>
+                            </button>
+
+                            <button
+                                onClick={() => getRandomSuggestion('out')}
+                                className="btn"
+                                style={{ padding: '2rem 1.5rem' }}
+                            >
+                                <div className="flex items-center justify-center space-x-3">
+                                    <IconComponent name="UtensilsCrossed" size={32} />
+                                    <span className="text-2xl font-semibold">Eating Out</span>
+                                </div>
+                                <p className="opacity-80 mt-2">{restaurantItems.length} restaurants available</p>
+                            </button>
+                        </div>
+
+                        <button
+                            onClick={() => setCurrentView('manage')}
+                            className="btn mt-8"
+                            style={{ background: 'rgba(255, 255, 255, 0.1)' }}
+                        >
+                            <div className="flex items-center justify-center space-x-2">
+                                <IconComponent name="Settings" size={20} />
+                                <span className="font-medium">Manage Your Lists</span>
+                            </div>
+                        </button>
+                    </div>
+                );
+            }
+
+            // Suggestion View
+            if (currentView === 'suggestion') {
+                return (
+                    <div className="container" style={{ minHeight: '100vh', paddingTop: '2rem' }}>
+                        <button
+                            onClick={() => setCurrentView('main')}
+                            className="back-btn mb-6"
+                        >
+                            <IconComponent name="ArrowLeft" size={20} />
+                            <span>Back to Menu</span>
+                        </button>
+
+                        <div className="text-center mb-8">
+                            <h2 className="text-2xl font-bold text-white mb-2">
+                                {suggestionType === 'home' ? 'Cook at Home' : 'Go Out to Eat'}
+                            </h2>
+                        </div>
+
+                        <div className="card text-center mb-6">
+                            {currentSuggestion ? (
+                                <div>
+                                    <h3 className="text-3xl font-bold text-white mb-2">{currentSuggestion.name}</h3>
+                                    {currentSuggestion.cuisine && (
+                                        <p className="text-white opacity-80 text-lg">{currentSuggestion.cuisine}</p>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="text-white">
+                                    <p className="text-xl mb-4">
+                                        {suggestionType === 'home' 
+                                            ? 'No home meals added yet!' 
+                                            : 'No restaurants added yet!'}
+                                    </p>
+                                    <button
+                                        onClick={() => setCurrentView('manage')}
+                                        className="btn-primary btn"
+                                    >
+                                        Add Some Options
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        {currentSuggestion && (
+                            <div className="space-y-4">
+                                <button
+                                    onClick={() => getRandomSuggestion(suggestionType)}
+                                    className="btn"
+                                    style={{ padding: '1.5rem' }}
+                                >
+                                    <span className="text-xl font-semibold">Another One</span>
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                );
+            }
+
+            // Management View
+            if (currentView === 'manage') {
+                return (
+                    <div className="container" style={{ minHeight: '100vh', paddingTop: '2rem' }}>
+                        <div className="flex items-center justify-between mb-6">
+                            <button
+                                onClick={() => {
+                                    resetForms();
+                                    setCurrentView('main');
+                                }}
+                                className="back-btn"
+                            >
+                                <IconComponent name="ArrowLeft" size={20} />
+                                <span>Back to Menu</span>
+                            </button>
+                            <h2 className="text-2xl font-bold text-white">Manage Lists</h2>
+                        </div>
+
+                        {/* Add/Edit Form */}
+                        {(showAddForm || editingItem) && (
+                            <div className="card">
+                                <h3 className="text-xl font-semibold text-white mb-4">
+                                    {editingItem ? 'Edit Item' : `Add ${addFormType === 'home' ? 'Home Meal' : 'Restaurant'}`}
+                                </h3>
+                                <div className="space-y-4">
+                                    <input
+                                        type="text"
+                                        placeholder={addFormType === 'home' ? 'Meal name' : 'Restaurant name'}
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        className="input"
+                                        onKeyPress={(e) => e.key === 'Enter' && (editingItem ? handleEditItem() : handleAddItem())}
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Cuisine type (optional)"
+                                        value={formData.cuisine}
+                                        onChange={(e) => setFormData({ ...formData, cuisine: e.target.value })}
+                                        className="input"
+                                        onKeyPress={(e) => e.key === 'Enter' && (editingItem ? handleEditItem() : handleAddItem())}
+                                    />
+                                    <div className="flex space-x-3">
+                                        <button
+                                            onClick={editingItem ? handleEditItem : handleAddItem}
+                                            className="btn btn-primary"
+                                            style={{ flex: 1 }}
+                                        >
+                                            {editingItem ? 'Save Changes' : 'Add Item'}
+                                        </button>
+                                        <button
+                                            onClick={resetForms}
+                                            className="btn"
+                                            style={{ flex: 1 }}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Home Meals Section */}
+                        <div className="card">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-xl font-semibold text-white">Home Meals ({homeItems.length})</h3>
+                                <button
+                                    onClick={() => {
+                                        resetForms();
+                                        setShowAddForm(true);
+                                        setAddFormType('home');
+                                    }}
+                                    className="icon-btn"
+                                >
+                                    <IconComponent name="Plus" size={20} />
+                                </button>
+                            </div>
+                            <div className="max-h-40 overflow-y-auto">
+                                {homeItems.map((item) => (
+                                    <div key={item.id} className="item-card">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="text-white font-medium">{item.name}</p>
+                                                {item.cuisine && <p className="text-white opacity-70 text-sm">{item.cuisine}</p>}
+                                            </div>
+                                            <div className="flex space-x-2">
+                                                <button
+                                                    onClick={() => startEdit(item, 'home')}
+                                                    className="icon-btn"
+                                                    style={{ padding: '0.25rem' }}
+                                                >
+                                                    <IconComponent name="Edit3" size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteItem(item.id, 'home')}
+                                                    className="icon-btn"
+                                                    style={{ padding: '0.25rem' }}
+                                                >
+                                                    <IconComponent name="Trash2" size={16} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                {homeItems.length === 0 && (
+                                    <p className="text-white opacity-70 text-center" style={{ padding: '1rem 0' }}>No home meals added yet</p>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Restaurants Section */}
+                        <div className="card">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-xl font-semibold text-white">Restaurants ({restaurantItems.length})</h3>
+                                <button
+                                    onClick={() => {
+                                        resetForms();
+                                        setShowAddForm(true);
+                                        setAddFormType('restaurant');
+                                    }}
+                                    className="icon-btn"
+                                >
+                                    <IconComponent name="Plus" size={20} />
+                                </button>
+                            </div>
+                            <div className="max-h-40 overflow-y-auto">
+                                {restaurantItems.map((item) => (
+                                    <div key={item.id} className="item-card">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="text-white font-medium">{item.name}</p>
+                                                {item.cuisine && <p className="text-white opacity-70 text-sm">{item.cuisine}</p>}
+                                            </div>
+                                            <div className="flex space-x-2">
+                                                <button
+                                                    onClick={() => startEdit(item, 'restaurant')}
+                                                    className="icon-btn"
+                                                    style={{ padding: '0.25rem' }}
+                                                >
+                                                    <IconComponent name="Edit3" size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteItem(item.id, 'restaurant')}
+                                                    className="icon-btn"
+                                                    style={{ padding: '0.25rem' }}
+                                                >
+                                                    <IconComponent name="Trash2" size={16} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                {restaurantItems.length === 0 && (
+                                    <p className="text-white opacity-70 text-center" style={{ padding: '1rem 0' }}>No restaurants added yet</p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return null;
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<DinnerDecisionApp />);
+    </script>
+</body>
+</html>
