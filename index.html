@@ -227,27 +227,45 @@
             const [addFormType, setAddFormType] = useState('');
             const [editingItem, setEditingItem] = useState(null);
             const [formData, setFormData] = useState({ name: '', cuisine: '' });
+            const [isLoading, setIsLoading] = useState(false);
+            const [syncStatus, setSyncStatus] = useState('');
 
-            // Load data from localStorage on component mount
+            // GitHub API configuration
+            const GITHUB_TOKEN = ''; // Add your GitHub token here
+            const REPO_OWNER = 'your-username'; // Replace with your GitHub username
+            const REPO_NAME = 'your-repo-name'; // Replace with your repository name
+            const DATA_FILE_PATH = 'data.json';
+
+            // Load data from GitHub and localStorage on component mount
             useEffect(() => {
-                const savedHomeItems = localStorage.getItem('dinnerApp_homeItems');
-                const savedRestaurantItems = localStorage.getItem('dinnerApp_restaurantItems');
+                const loadData = async () => {
+                    // Try to load from GitHub first
+                    await loadDataFromGitHub();
+                    
+                    // Fallback to localStorage if no GitHub token or data
+                    const savedHomeItems = localStorage.getItem('dinnerApp_homeItems');
+                    const savedRestaurantItems = localStorage.getItem('dinnerApp_restaurantItems');
+                    
+                    if (savedHomeItems && homeItems.length === 0) {
+                        setHomeItems(JSON.parse(savedHomeItems));
+                    }
+                    if (savedRestaurantItems && restaurantItems.length === 0) {
+                        setRestaurantItems(JSON.parse(savedRestaurantItems));
+                    }
+                };
                 
-                if (savedHomeItems) {
-                    setHomeItems(JSON.parse(savedHomeItems));
-                }
-                if (savedRestaurantItems) {
-                    setRestaurantItems(JSON.parse(savedRestaurantItems));
-                }
+                loadData();
             }, []);
 
-            // Save data to localStorage whenever items change
+            // Save data to localStorage and GitHub whenever items change
             useEffect(() => {
                 localStorage.setItem('dinnerApp_homeItems', JSON.stringify(homeItems));
+                saveDataToGitHub();
             }, [homeItems]);
 
             useEffect(() => {
                 localStorage.setItem('dinnerApp_restaurantItems', JSON.stringify(restaurantItems));
+                saveDataToGitHub();
             }, [restaurantItems]);
 
             const getRandomSuggestion = (type) => {
@@ -328,6 +346,100 @@
                 setFormData({ name: '', cuisine: '' });
             };
 
+            // GitHub API functions
+            const loadDataFromGitHub = async () => {
+                if (!GITHUB_TOKEN) {
+                    console.log('No GitHub token provided, using localStorage only');
+                    return;
+                }
+
+                try {
+                    setIsLoading(true);
+                    setSyncStatus('Loading data from GitHub...');
+                    
+                    const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE_PATH}`, {
+                        headers: {
+                            'Authorization': `token ${GITHUB_TOKEN}`,
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        const content = JSON.parse(atob(data.content));
+                        setHomeItems(content.homeItems || []);
+                        setRestaurantItems(content.restaurantItems || []);
+                        setSyncStatus('Data loaded from GitHub');
+                    } else {
+                        console.log('No data file found on GitHub, using localStorage');
+                        setSyncStatus('Using local data');
+                    }
+                } catch (error) {
+                    console.error('Error loading from GitHub:', error);
+                    setSyncStatus('Error loading from GitHub');
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+
+            const saveDataToGitHub = async () => {
+                if (!GITHUB_TOKEN) {
+                    console.log('No GitHub token provided, saving to localStorage only');
+                    return;
+                }
+
+                try {
+                    setIsLoading(true);
+                    setSyncStatus('Saving to GitHub...');
+                    
+                    const data = {
+                        homeItems: homeItems,
+                        restaurantItems: restaurantItems
+                    };
+
+                    const content = btoa(JSON.stringify(data, null, 2));
+                    
+                    // First, get the current file to get its SHA
+                    const getResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE_PATH}`, {
+                        headers: {
+                            'Authorization': `token ${GITHUB_TOKEN}`,
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    });
+
+                    let sha = null;
+                    if (getResponse.ok) {
+                        const fileData = await getResponse.json();
+                        sha = fileData.sha;
+                    }
+
+                    const updateResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE_PATH}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `token ${GITHUB_TOKEN}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/vnd.github.v3+json'
+                        },
+                        body: JSON.stringify({
+                            message: 'Update dinner app data',
+                            content: content,
+                            sha: sha
+                        })
+                    });
+
+                    if (updateResponse.ok) {
+                        setSyncStatus('Saved to GitHub');
+                    } else {
+                        throw new Error('Failed to save to GitHub');
+                    }
+                } catch (error) {
+                    console.error('Error saving to GitHub:', error);
+                    setSyncStatus('Error saving to GitHub');
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+
             // Main Menu View
             if (currentView === 'main') {
                 return (
@@ -339,7 +451,7 @@
                                 alt="What's for Dinner? Logo" 
                                 className="logo-image mb-4"
                                 style={{ 
-                                    maxWidth: '300px', 
+                                    maxWidth: '500px', 
                                     height: 'auto',
                                     display: 'block',
                                     margin: '0 auto'
@@ -471,6 +583,13 @@
                         </button>
                         
                         <h2 className="text-2xl font-bold text-white mb-6 text-center">Manage Lists</h2>
+                        
+                        {syncStatus && (
+                            <div className="text-center mb-4">
+                                <p className="text-white opacity-70 text-sm">{syncStatus}</p>
+                                {isLoading && <p className="text-white opacity-70 text-sm">Syncing...</p>}
+                            </div>
+                        )}
 
                         {/* Add/Edit Form */}
                         {(showAddForm || editingItem) && (
