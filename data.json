@@ -29,7 +29,7 @@
     { "id": 27, "name": "Hot dogs" },
     { "id": 28, "name": "Fried Rice and Chicken" },
     { "id": 28, "name": "Chicken Chowmein" },
-    { "id": 28, "name": "Sichuan Chicken Fat Noodles" },
+    { "id": 29, "name": "Sichuan Chicken Fat Noodles" }
   ],
   "restaurantItems": [
     { "id": 1, "name": "Pars" },
