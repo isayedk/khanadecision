@@ -226,27 +226,15 @@
             const [isLoading, setIsLoading] = useState(true);
             const [error, setError] = useState('');
 
-            // GitHub API configuration
-            const GITHUB_TOKEN = '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'; // Paste your token here
-            const REPO_OWNER = 'isayedk'; // Your GitHub username
-            const REPO_NAME = 'khanadecision'; // Your repository name
-            const DATA_FILE_PATH = 'data.json';
-
-            // Load data from GitHub on component mount
+            // Load data from public GitHub raw URL on component mount
             useEffect(() => {
-                const loadDataFromGitHub = async () => {
+                const loadData = async () => {
                     setIsLoading(true);
                     setError('');
                     try {
-                        const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE_PATH}`, {
-                            headers: {
-                                'Authorization': `token ${GITHUB_TOKEN}`,
-                                'Accept': 'application/vnd.github.v3+json'
-                            }
-                        });
+                        const response = await fetch('https://raw.githubusercontent.com/isayedk/khanadecision/main/data.json');
                         if (response.ok) {
-                            const data = await response.json();
-                            const content = JSON.parse(atob(data.content));
+                            const content = await response.json();
                             setHomeItems(content.homeItems || []);
                             setRestaurantItems(content.restaurantItems || []);
                         } else {
@@ -258,7 +246,7 @@
                         setIsLoading(false);
                     }
                 };
-                loadDataFromGitHub();
+                loadData();
             }, []);
 
             const getRandomSuggestion = (type) => {
