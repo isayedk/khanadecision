@@ -1,0 +1,12 @@
+{
+  "homeItems": [
+    { "id": 1, "name": "Chicken Karahi", "cuisine": "Pakistani" },
+    { "id": 2, "name": "Chicken Biryani", "cuisine": "Pakistani" },
+    { "id": 3, "name": "Tiramisu", "cuisine": "Italian" }
+  ],
+  "restaurantItems": [
+    { "id": 1, "name": "Pars", "cuisine": "Persian" },
+    { "id": 2, "name": "Jollibee", "cuisine": "Filipino" },
+    { "id": 3, "name": "Shehr e Karachi", "cuisine": "Pakistani" }
+  ]
+}
